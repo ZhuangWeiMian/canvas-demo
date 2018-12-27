@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <canvas id="canvas"></canvas>
+    <!-- <button onclick="nextLevel()">下一关</button> -->
+    <style></style>
+</head>
+
+<body>
+    <script>
+        let canvas = document.getElementById('canvas');
+        let context = canvas.getContext('2d');
+        canvas.width = 600;
+        canvas.height = 600;
+        const canvasCLientXY = canvas.getBoundingClientRect();
+        let n = 1;
+        const WIDTH = 50;
+        const SPACE = 3;
+        let coordinate = {};
+        nextLevel();
+        function nextLevel() {
+            n++;
+            if (n >= 11) {
+                alert('恭喜你成功完成！');
+                return;
+            }
+            coordinate.x = Math.floor(Math.random() * (+n));
+            coordinate.y = Math.floor(Math.random() * (+n));
+            drawCanvas(n, coordinate);
+        }
+
+        function drawCanvas(n, specialPosition) {
+            let color = Math.floor(Math.random() * (360 + 1));
+            let highLight = Math.floor(Math.random() * (100 + 1));
+            let specialColorSaturation = 8 * n;
+            context.clearRect(0, 0, 800, 800);
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    if (specialPosition.x === i && specialPosition.y === j) {
+                        context.fillStyle = `hsl(${color} ${specialColorSaturation}% ${highLight}%)`;
+                    } else {
+                        context.fillStyle = `hsl(${color} 100% ${highLight}%)`;
+                    }
+                    context.fillRect((i + 1) * SPACE + i * WIDTH, (j + 1) * SPACE + j * WIDTH, WIDTH, WIDTH);
+                }
+            }
+        }
+        
+
+        function judgePosition(clickPosition, realPosition) {
+            let x = transformXY(clickPosition.x - canvasCLientXY.left);
+            let y = transformXY(clickPosition.y - canvasCLientXY.top);
+            if (+x === realPosition.x && +y === realPosition.y) {
+                console.log(true);
+                nextLevel();
+            } else {
+                console.log(false);
+            }
+        }
+
+        function transformXY(position) {
+            return Math.floor((+position - SPACE) / (+SPACE+WIDTH));
+        }
+        window.addEventListener('click', function (event) {
+            let e = event || window.event;
+            let clickPosition = {
+                x: e.clientX,
+                y: e.clientY
+            };
+            judgePosition(clickPosition, coordinate)
+        })
+    </script>
+</body>
+
+</html>
